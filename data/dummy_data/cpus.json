@@ -1,0 +1,129 @@
+[
+  {
+    "type": "cpu",
+    "name": "AMD Ryzen 5 5600X",
+    "brand": "AMD",
+    "model": "5600X",
+    "price": {
+      "amount": 199.99,
+      "currency": "USD",
+      "last_updated": "2025-12-18T00:00:00Z"
+    },
+    "specifications": {
+      "cores": 6,
+      "threads": 12,
+      "base_clock": 3.7,
+      "boost_clock": 4.6,
+      "socket": "AM4"
+    },
+    "compatibility": {
+      "socket": "AM4"
+    },
+    "performance_scores": {
+      "gaming_score": 85,
+      "productivity_score": 80,
+      "creative_score": 75,
+      "overall_score": 82
+    },
+    "availability": {
+      "in_stock": true,
+      "stock_quantity": 50,
+      "retailers": [
+        {
+          "name": "Amazon",
+          "url": "https://amazon.com/amd-ryzen-5-5600x",
+          "price": 199.99
+        },
+        {
+          "name": "Newegg",
+          "url": "https://newegg.com/amd-ryzen-5-5600x",
+          "price": 189.99
+        }
+      ]
+    },
+    "metadata": {
+      "source": "manufacturer",
+      "image_urls": ["https://example.com/amd-5600x.jpg"],
+      "reviews": {
+        "average_rating": 4.5,
+        "review_count": 1250
+      }
+    }
+  },
+  {
+    "type": "cpu",
+    "name": "Intel Core i5-12600K",
+    "brand": "Intel",
+    "model": "i5-12600K",
+    "price": {
+      "amount": 229.99,
+      "currency": "USD",
+      "last_updated": "2025-12-18T00:00:00Z"
+    },
+    "specifications": {
+      "cores": 10,
+      "threads": 16,
+      "base_clock": 3.7,
+      "boost_clock": 4.9,
+      "socket": "LGA1700"
+    },
+    "compatibility": {
+      "socket": "LGA1700"
+    },
+    "performance_scores": {
+      "gaming_score": 88,
+      "productivity_score": 85,
+      "creative_score": 82,
+      "overall_score": 86
+    },
+    "availability": {
+      "in_stock": true,
+      "stock_quantity": 30,
+      "retailers": [
+        {
+          "name": "Best Buy",
+          "url": "https://bestbuy.com/intel-i5-12600k",
+          "price": 229.99
+        }
+      ]
+    },
+    "metadata": {
+      "source": "manufacturer",
+      "image_urls": ["https://example.com/intel-i5-12600k.jpg"]
+    }
+  },
+  {
+    "type": "cpu",
+    "name": "AMD Ryzen 7 5800X",
+    "brand": "AMD",
+    "model": "5800X",
+    "price": {
+      "amount": 299.99,
+      "currency": "USD",
+      "last_updated": "2025-12-18T00:00:00Z"
+    },
+    "specifications": {
+      "cores": 8,
+      "threads": 16,
+      "base_clock": 3.8,
+      "boost_clock": 4.7,
+      "socket": "AM4"
+    },
+    "compatibility": {
+      "socket": "AM4"
+    },
+    "performance_scores": {
+      "gaming_score": 90,
+      "productivity_score": 88,
+      "creative_score": 85,
+      "overall_score": 88
+    },
+    "availability": {
+      "in_stock": true,
+      "stock_quantity": 25
+    },
+    "metadata": {
+      "source": "manufacturer"
+    }
+  }
+]

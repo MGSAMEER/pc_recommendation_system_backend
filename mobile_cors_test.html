@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile CORS Test - PC Recommendation System</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .warning { background-color: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+        input { padding: 8px; margin: 5px; width: 200px; }
+    </style>
+</head>
+<body>
+    <h1>Mobile CORS Test - PC Recommendation System</h1>
+    <p>Use this page to test CORS behavior from mobile devices. Open browser dev tools to see network requests.</p>
+
+    <div class="test-section">
+        <h2>Configuration</h2>
+        <p><strong>Backend URL:</strong> <span id="backend-url">http://192.168.0.105:8000</span></p>
+        <p><strong>Frontend Origin:</strong> <span id="frontend-origin"></span></p>
+        <button onclick="updateConfig()">Update Config</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Health Check Test</h2>
+        <button onclick="testHealth()">Test Health Endpoint</button>
+        <div id="health-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>CORS Preflight Test (OPTIONS)</h2>
+        <button onclick="testOptions()">Test OPTIONS Request</button>
+        <div id="options-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Authentication Test</h2>
+        <input type="email" id="email" placeholder="Email" value="mobiletest@example.com">
+        <input type="password" id="password" placeholder="Password" value="testpass123">
+        <br>
+        <button onclick="testLogin()">Test Login</button>
+        <button onclick="testSignup()">Test Signup</button>
+        <button onclick="testTokenStorage()">Test Token Storage</button>
+        <div id="auth-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Network Diagnostics</h2>
+        <button onclick="checkConnectivity()">Check Connectivity</button>
+        <div id="network-result"></div>
+    </div>
+
+    <script>
+        let backendUrl = 'http://192.168.0.105:8000';
+        let frontendOrigin = window.location.origin;
+
+        function updateConfig() {
+            document.getElementById('backend-url').textContent = backendUrl;
+            document.getElementById('frontend-origin').textContent = frontendOrigin;
+        }
+
+        function logResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="${type}">${message}</div>`;
+            element.style.display = 'block';
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        async function testHealth() {
+            try {
+                logResult('health-result', 'Testing health endpoint...', 'warning');
+
+                const response = await fetch(`${backendUrl}/api/v1/health`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Origin': frontendOrigin
+                    }
+                });
+
+                const data = await response.text();
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Credentials': response.headers.get('Access-Control-Allow-Credentials'),
+                    'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers')
+                };
+
+                let result = `<strong>Status:</strong> ${response.status}<br>`;
+                result += `<strong>Response:</strong> ${data}<br>`;
+                result += `<strong>CORS Headers:</strong><br><pre>${JSON.stringify(corsHeaders, null, 2)}</pre>`;
+
+                if (response.ok) {
+                    logResult('health-result', result, 'success');
+                } else {
+                    logResult('health-result', result, 'error');
+                }
+
+            } catch (error) {
+                logResult('health-result', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testOptions() {
+            try {
+                logResult('options-result', 'Testing OPTIONS preflight...', 'warning');
+
+                const response = await fetch(`${backendUrl}/api/v1/auth/login`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': frontendOrigin,
+                        'Access-Control-Request-Method': 'POST',
+                        'Access-Control-Request-Headers': 'content-type,authorization'
+                    }
+                });
+
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers'),
+                    'Access-Control-Allow-Credentials': response.headers.get('Access-Control-Allow-Credentials'),
+                    'Access-Control-Max-Age': response.headers.get('Access-Control-Max-Age')
+                };
+
+                let result = `<strong>Status:</strong> ${response.status}<br>`;
+                result += `<strong>CORS Headers:</strong><br><pre>${JSON.stringify(corsHeaders, null, 2)}</pre>`;
+
+                // Check if critical headers are present
+                const checks = [
+                    corsHeaders['Access-Control-Allow-Origin'] === frontendOrigin || corsHeaders['Access-Control-Allow-Origin'] === '*',
+                    corsHeaders['Access-Control-Allow-Methods'] && corsHeaders['Access-Control-Allow-Methods'].includes('POST'),
+                    corsHeaders['Access-Control-Allow-Headers'] && corsHeaders['Access-Control-Allow-Headers'].toLowerCase().includes('authorization'),
+                    corsHeaders['Access-Control-Allow-Credentials'] === 'true'
+                ];
+
+                const passedChecks = checks.filter(Boolean).length;
+                result += `<strong>CORS Checks:</strong> ${passedChecks}/4 passed`;
+
+                if (passedChecks === 4) {
+                    logResult('options-result', result, 'success');
+                } else {
+                    logResult('options-result', result, 'warning');
+                }
+
+            } catch (error) {
+                logResult('options-result', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                logResult('auth-result', 'Testing login...', 'warning');
+
+                const response = await fetch(`${backendUrl}/api/v1/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Origin': frontendOrigin
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.text();
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Credentials': response.headers.get('Access-Control-Allow-Credentials')
+                };
+
+                let result = `<strong>Status:</strong> ${response.status}<br>`;
+                result += `<strong>Response:</strong> ${data}<br>`;
+                result += `<strong>CORS Headers:</strong><br><pre>${JSON.stringify(corsHeaders, null, 2)}</pre>`;
+
+                if (response.status === 200 || response.status === 401) {
+                    logResult('auth-result', result, 'success');
+                } else {
+                    logResult('auth-result', result, 'error');
+                }
+
+            } catch (error) {
+                logResult('auth-result', `Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSignup() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                logResult('auth-result', 'Testing signup...', 'warning');
+
+                const response = await fetch(`${backendUrl}/api/v1/auth/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Origin': frontendOrigin
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password,
+                        full_name: 'Mobile Test User'
+                    })
+                });
+
+                const data = await response.text();
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Credentials': response.headers.get('Access-Control-Allow-Credentials')
+                };
+
+                let result = `<strong>Status:</strong> ${response.status}<br>`;
+                result += `<strong>Response:</strong> ${data}<br>`;
+                result += `<strong>CORS Headers:</strong><br><pre>${JSON.stringify(corsHeaders, null, 2)}</pre>`;
+
+                if (response.status === 201 || response.status === 400) {
+                    logResult('auth-result', result, 'success');
+                } else {
+                    logResult('auth-result', result, 'error');
+                }
+
+            } catch (error) {
+                logResult('auth-result', `Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testTokenStorage() {
+            logResult('auth-result', 'Testing token storage...', 'warning');
+
+            try {
+                // Test localStorage availability
+                const testKey = 'cors_test_token';
+                const testValue = 'test_token_value_' + Date.now();
+
+                localStorage.setItem(testKey, testValue);
+                const retrieved = localStorage.getItem(testKey);
+                localStorage.removeItem(testKey);
+
+                if (retrieved === testValue) {
+                    logResult('auth-result', '✅ localStorage is working correctly for token storage', 'success');
+                } else {
+                    logResult('auth-result', '❌ localStorage retrieval failed', 'error');
+                }
+
+                // Test sessionStorage as fallback
+                try {
+                    sessionStorage.setItem(testKey, testValue);
+                    const sessionRetrieved = sessionStorage.getItem(testKey);
+                    sessionStorage.removeItem(testKey);
+
+                    if (sessionRetrieved === testValue) {
+                        logResult('auth-result', logResult('auth-result').innerHTML + '<br>✅ sessionStorage also available', 'success');
+                    }
+                } catch (sessionError) {
+                    logResult('auth-result', logResult('auth-result').innerHTML + '<br>⚠️ sessionStorage not available', 'warning');
+                }
+
+            } catch (error) {
+                logResult('auth-result', `❌ localStorage not available: ${error.message}<br>This will prevent authentication from working on mobile!`, 'error');
+            }
+        }
+
+        function checkConnectivity() {
+            logResult('network-result', 'Checking network connectivity...', 'warning');
+
+            // Test basic connectivity
+            fetch(`${backendUrl}/api/v1/health`, {
+                method: 'HEAD',
+                mode: 'no-cors'
+            })
+            .then(() => {
+                logResult('network-result', 'Network connectivity: OK', 'success');
+            })
+            .catch(() => {
+                logResult('network-result', 'Network connectivity: FAILED - Check IP address and port', 'error');
+            });
+        }
+
+        // Initialize
+        updateConfig();
+    </script>
+</body>
+</html>

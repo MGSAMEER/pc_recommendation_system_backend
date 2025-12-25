@@ -1,0 +1,101 @@
+[
+  {
+    "type": "gpu",
+    "name": "NVIDIA GeForce RTX 4060",
+    "brand": "NVIDIA",
+    "model": "RTX 4060",
+    "price": {
+      "amount": 299.99,
+      "currency": "USD",
+      "last_updated": "2025-12-18T00:00:00Z"
+    },
+    "specifications": {
+      "vram": 8,
+      "memory_type": "GDDR6",
+      "core_clock": 1830,
+      "boost_clock": 2505
+    },
+    "compatibility": {
+      "power_connectors": ["8-pin"]
+    },
+    "performance_scores": {
+      "gaming_score": 85,
+      "productivity_score": 70,
+      "creative_score": 75,
+      "overall_score": 78
+    },
+    "availability": {
+      "in_stock": true,
+      "stock_quantity": 40
+    },
+    "metadata": {
+      "source": "manufacturer"
+    }
+  },
+  {
+    "type": "gpu",
+    "name": "AMD Radeon RX 7600",
+    "brand": "AMD",
+    "model": "RX 7600",
+    "price": {
+      "amount": 269.99,
+      "currency": "USD",
+      "last_updated": "2025-12-18T00:00:00Z"
+    },
+    "specifications": {
+      "vram": 8,
+      "memory_type": "GDDR6",
+      "core_clock": 1720,
+      "boost_clock": 2655
+    },
+    "compatibility": {
+      "power_connectors": ["8-pin"]
+    },
+    "performance_scores": {
+      "gaming_score": 82,
+      "productivity_score": 68,
+      "creative_score": 72,
+      "overall_score": 75
+    },
+    "availability": {
+      "in_stock": true,
+      "stock_quantity": 35
+    },
+    "metadata": {
+      "source": "manufacturer"
+    }
+  },
+  {
+    "type": "gpu",
+    "name": "NVIDIA GeForce RTX 4070",
+    "brand": "NVIDIA",
+    "model": "RTX 4070",
+    "price": {
+      "amount": 549.99,
+      "currency": "USD",
+      "last_updated": "2025-12-18T00:00:00Z"
+    },
+    "specifications": {
+      "vram": 12,
+      "memory_type": "GDDR6X",
+      "core_clock": 1920,
+      "boost_clock": 2475
+    },
+    "compatibility": {
+      "power_connectors": ["8-pin", "6-pin"]
+    },
+    "performance_scores": {
+      "gaming_score": 95,
+      "productivity_score": 85,
+      "creative_score": 90,
+      "overall_score": 92
+    },
+    "availability": {
+      "in_stock": true,
+      "stock_quantity": 20
+    },
+    "metadata": {
+      "source": "manufacturer"
+    }
+  }
+]

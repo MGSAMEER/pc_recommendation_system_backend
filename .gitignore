@@ -1,0 +1,46 @@
+# Environment variables
+.env
+.env.local
+.env.production
+.env.staging
+
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Database files (if any)
+*.db
+*.sqlite3
+
+# Node modules (if any)
+node_modules/
+
+# Build artifacts
+build/
+dist/
