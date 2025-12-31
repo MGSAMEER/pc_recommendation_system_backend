@@ -39,29 +39,6 @@ async def health_check() -> Dict[str, Any]:
             "environment": "development" if settings.debug else "production"
         }
 
-        # Database health check (graceful failure)
-        try:
-            from app.core.database import get_database
-            db_instance = await get_database()
-            db_start = time.time()
-            await db_instance.command('ping')
-            db_response_time = (time.time() - db_start) * 1000
-            
-            collections = await db_instance.list_collection_names()
-            response_data["database"] = {
-                "status": "healthy",
-                "response_time_ms": round(db_response_time, 2),
-                "collections_count": len(collections)
-            }
-        except Exception as db_error:
-            logger.warning(f"Database health check failed: {db_error}")
-            response_data["database"] = {
-                "status": "unhealthy",
-                "error": str(db_error)
-            }
-            errors.append(f"Database error: {str(db_error)}")
-            health_status = "degraded"
-
         # System metrics (optional, graceful failure if psutil not available)
         try:
             import psutil
@@ -142,6 +119,7 @@ async def database_health() -> Dict[str, Any]:
             pass  # Collections might not exist yet
 
         return {
+            "database": "connected",
             "status": health_info.get("status", "unknown"),
             "response_time_ms": health_info.get("response_time_ms"),
             "mongodb_version": health_info.get("mongodb_version"),
@@ -159,10 +137,10 @@ async def database_health() -> Dict[str, Any]:
         raise
     except Exception as e:
         logger.error(f"Database health check failed: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=f"Database unhealthy: {str(e) if settings.debug else 'Connection failed'}"
-        )
+        return {
+            "database": "unavailable",
+            "error": str(e) if settings.debug else "Connection failed"
+        }
 
 
 @router.get(

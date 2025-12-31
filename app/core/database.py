@@ -25,7 +25,7 @@ async def connect_to_mongo():
             "maxPoolSize": 100,  # Increased for concurrent users
             "minPoolSize": 10,   # Maintain minimum connections
             "maxIdleTimeMS": 45000,  # Increased idle time
-            "serverSelectionTimeoutMS": 3000,  # Faster server selection
+            "serverSelectionTimeoutMS": 5000,  # Faster server selection
             "connectTimeoutMS": 5000,  # Faster connection timeout
             "socketTimeoutMS": 30000,  # Reasonable socket timeout
             "waitQueueTimeoutMS": 2000,  # Shorter wait queue timeout
@@ -37,7 +37,7 @@ async def connect_to_mongo():
         }
 
         # SSL configuration for production
-        if settings.mongodb_uri.startswith('mongodb+srv://') or 'ssl=' in settings.mongodb_uri:
+        if settings.mongodb_uri.startswith('mongodb+srv://'):
             client_kwargs.update({
                 "tls": True,
                 "tlsAllowInvalidCertificates": False,
