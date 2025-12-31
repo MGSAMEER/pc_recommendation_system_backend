@@ -76,6 +76,7 @@ if not settings.debug:
         "https://yourdomain.com",  # Replace with actual domain
         "https://www.yourdomain.com",  # Replace with actual domain
         "https://app.yourdomain.com",  # Replace with actual domain
+        "https://pc-recommendation-system-frontend.vercel.app",  # Vercel frontend
     ]
     # Only add if not already present
     for origin in production_origins:
@@ -239,6 +240,14 @@ try:
 except Exception as e:
     logger.error(f"Failed to register analytics router: {e}")
 
+# AI routes
+try:
+    from app.api.routes import ai
+    app.include_router(ai.router, prefix=f"{settings.api_prefix}/ai", tags=["AI"])  # POST /api/v1/ai/chat
+    logger.info("AI router registered")
+except Exception as e:
+    logger.error(f"Failed to register AI router: {e}")
+
 
 # Root endpoint
 @app.get("/")
@@ -257,7 +266,7 @@ if __name__ == "__main__":
     uvicorn.run(
         "app.main:app",
         host="0.0.0.0",
-        port=8002,
+        port=8000,
         reload=settings.debug,
         log_level="info" if settings.debug else "warning"
     )
