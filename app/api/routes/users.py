@@ -5,11 +5,14 @@ User management API routes
 from typing import List, Optional
 from fastapi import APIRouter, HTTPException, status, Query, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+import logging
 
 from app.api.models.user import UserUpdate, UserProfileUpdateRequest
 from app.api.services.user_service import user_service
 from app.api.services.auth_service import auth_service
 from app.core.security import input_validator
+
+logger = logging.getLogger(__name__)
 
 
 router = APIRouter()
@@ -19,15 +22,18 @@ security = HTTPBearer()
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Dependency to get current authenticated user"""
     token = credentials.credentials
+    logger.debug(f"Verifying token: {token[:20]}...")
     token_data = auth_service.verify_token(token)
 
     if not token_data:
+        logger.warning("Token verification failed")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token invalid or expired",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+    logger.debug(f"Token verified for user {token_data.user_id}")
     return token_data
 
 
@@ -160,6 +166,16 @@ async def update_user_preferences(
 ):
     """Update user PC preferences"""
     try:
+        logger.info(f"Updating preferences for user {current_user.user_id}: {preferences}")
+
+        # Ensure user exists
+        user = await user_service.get_user_profile(current_user.user_id)
+        if not user:
+            logger.error(f"User {current_user.user_id} not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
         # Validate preferences
         if "primary_use" in preferences:
             if not input_validator.validate_purpose(preferences["primary_use"]):

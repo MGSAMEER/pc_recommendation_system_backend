@@ -180,9 +180,10 @@ def validate_recommendation_request(request: dict) -> List[str]:
     # Validate budget
     if "budget" in request:
         budget = request["budget"]
-        if not isinstance(budget, dict):
-            errors.append("Budget must be an object with 'min' and 'max' fields")
-        else:
+        if isinstance(budget, (int, float)):
+            # Convert number to dict
+            request["budget"] = {"min": budget, "max": budget}
+        elif isinstance(budget, dict):
             if "min" not in budget or "max" not in budget:
                 errors.append("Budget must have 'min' and 'max' fields")
             elif not isinstance(budget.get("min"), (int, float)) or not isinstance(budget.get("max"), (int, float)):
@@ -191,6 +192,8 @@ def validate_recommendation_request(request: dict) -> List[str]:
                 errors.append("Invalid budget range")
             elif budget["min"] < 100 or budget["max"] > 10000:  # Reasonable budget limits
                 errors.append("Budget must be between $100 and $10,000")
+        else:
+            errors.append("Budget must be a number or an object with 'min' and 'max' fields")
 
     # Validate performance level (required)
     if "performance_level" not in request or request["performance_level"] is None:
